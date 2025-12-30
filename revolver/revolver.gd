@@ -14,19 +14,9 @@ var is_running := false
 
 func _process(_delta: float) -> void:
 	if Input.is_action_pressed("ui_accept"):
-		print("test")
-		fire_projectile(get_global_mouse_position())
-
-func start_revolver() -> void:
-	if is_running:
-		return
-	is_running = true
-	revolver_loop()
-
-func revolver_loop() -> void:
-	while is_running and bullets_fired < MAX_BULLETS:
-		#fire_bullet()
-		bullets_fired += 1
+		var target = get_nearest_enemy()
+		if target:
+			fire_projectile(target.global_position)
 
 func fire_projectile(target: Vector2) -> void:
 	var radius: float = 22.0
@@ -34,5 +24,22 @@ func fire_projectile(target: Vector2) -> void:
 	
 	var projectile: Projectile = projectile_scene.instantiate()
 	projectile.global_position = global_position + (direction * radius)
-	projectile.direction = direction
+	projectile.velocity = direction * projectile.speed
 	get_tree().current_scene.add_child(projectile)
+
+func get_nearest_enemy() -> Node2D:
+	var enemies: Array[Node] = get_tree().get_nodes_in_group("enemies")
+	if enemies.is_empty():
+		return null
+	
+	var closest_enemy: Node2D = null
+	var closest_dist_sq: float = INF
+	
+	for enemy in enemies:
+		enemy = enemy as Node2D
+		var dist_sq: float = global_position.distance_squared_to(enemy.global_position)
+		if dist_sq < closest_dist_sq:
+			closest_dist_sq = dist_sq
+			closest_enemy = enemy
+	
+	return closest_enemy

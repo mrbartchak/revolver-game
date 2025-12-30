@@ -1,18 +1,33 @@
 class_name Projectile
 extends Area2D
 
-var max_range: float = 360.0
-var direction: Vector2 = Vector2.ZERO
-var speed: float = 200.0
+@export var speed: float = 900.0
+@export var damage: int = 1
+@export var lifetime: float = 3.0
 
-var _travelled_distance: float = 0.0
+var velocity: Vector2
+var alive: bool = true
+
+func _ready() -> void:
+	monitoring = true
+	
+	if lifetime > 0:
+		await get_tree().create_timer(lifetime).timeout
+		queue_free()
 
 func _physics_process(delta: float) -> void:
-	var distance: float = speed * delta
-	var motion: Vector2 = direction * distance
+	position += velocity * delta
+
+func _on_body_entered(body: Node2D) -> void:
+	if not alive:
+		return
+	if not body.is_in_group("enemies"):
+		return
 	
-	position += motion
+	alive = false
+	set_deferred("monitoring", false)
 	
-	_travelled_distance += distance
-	if _travelled_distance > max_range:
-		queue_free()
+	if body.has_method("take_damage"):
+		body.take_damage(damage)
+	
+	queue_free()

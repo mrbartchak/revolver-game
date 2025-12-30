@@ -13,7 +13,16 @@ position = Vector2(160, 90)
 projectile_scene = ExtResource("2_r77kf")
 
 [node name="Enemy" parent="World2D" instance=ExtResource("3_3gdo0")]
-position = Vector2(84, 112)
+position = Vector2(275, 34)
 
 [node name="Enemy2" parent="World2D" instance=ExtResource("3_3gdo0")]
-position = Vector2(39, 60)
+position = Vector2(37, 61)
+
+[node name="Enemy3" parent="World2D" instance=ExtResource("3_3gdo0")]
+position = Vector2(98, 26)
+
+[node name="Enemy4" parent="World2D" instance=ExtResource("3_3gdo0")]
+position = Vector2(42, 152)
+
+[node name="Enemy5" parent="World2D" instance=ExtResource("3_3gdo0")]
+position = Vector2(255, 145)

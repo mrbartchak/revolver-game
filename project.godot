@@ -24,6 +24,12 @@ window/size/window_height_override=2160
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="enemies"
+2d_physics/layer_3="projectiles"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
