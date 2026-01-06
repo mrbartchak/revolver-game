@@ -14,11 +14,23 @@ var is_running := false
 
 func _process(_delta: float) -> void:
 	if Input.is_action_pressed("ui_accept"):
-		var target = get_nearest_enemy()
-		if target:
-			fire_projectile(target.global_position)
+		try_fire()
+
+func try_fire() -> void:
+	if not $CooldownTimer.is_stopped():
+		return
+	
+	var target = get_nearest_enemy()
+	if not target:
+		return
+	
+	fire_projectile(target.global_position)
+	play_gunshot_sound()
+	play_recoil()
+	$CooldownTimer.start()
 
 func fire_projectile(target: Vector2) -> void:
+	print("firing")
 	var radius: float = 22.0
 	var direction: Vector2 = (target - global_position).normalized()
 	
@@ -43,3 +55,33 @@ func get_nearest_enemy() -> Node2D:
 			closest_enemy = enemy
 	
 	return closest_enemy
+
+#=== Visuals ===
+var recoil_offset_y: float = -6.0
+var recoil_time: float = 0.08
+
+func play_recoil() -> void:
+	var base_y: float = $Sprite2D.position.y
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	
+	# Pop up
+	tween.tween_property(
+		$Sprite2D,
+		"position:y",
+		base_y + recoil_offset_y,
+		recoil_time
+	)
+
+	# Snap back
+	tween.tween_property(
+		$Sprite2D,
+		"position:y",
+		base_y,
+		recoil_time
+	)
+
+func play_gunshot_sound() -> void:
+	$GunshotAudio.pitch_scale = 0.95 + randf() * 0.1
+	$GunshotAudio.play()
